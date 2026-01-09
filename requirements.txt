@@ -3,4 +3,9 @@ uvicorn==0.34.0
 python-multipart==0.0.20
 opencv-python-headless==4.11.0.86
 ultralytics==8.3.60
-prometheus-fastapi-instrumentator
+prometheus-fastapi-instrumentator==7.0.0
+pydantic-settings==2.7.1
+cap-from-youtube==0.0.10
+yt-dlp==2024.12.23
+numpy==1.26.4
+requests==2.32.3
