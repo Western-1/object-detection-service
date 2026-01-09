@@ -1,6 +1,7 @@
 from fastapi import FastAPI, UploadFile, File, Query
 from fastapi.responses import StreamingResponse, JSONResponse
 from ultralytics import YOLO
+from prometheus_fastapi_instrumentator import Instrumentator
 import cv2
 import numpy as np
 import io
@@ -8,32 +9,32 @@ from collections import Counter
 
 app = FastAPI(title="YOLOv8 Object Detection Service")
 
-# Завантажуємо модель
-model = YOLO('yolov8n.pt')
+Instrumentator().instrument(app).expose(app)
 
-@app.get("/")
-def root():
-    return {
-        "message": "Welcome to Object Detection API!",
-        "endpoints": {
-            "/detect_image": "Returns image with bounding boxes",
-            "/detect_json": "Returns JSON with object counts"
-        }
-    }
+model = YOLO('yolov8n.pt')
 
 def process_image(contents):
     nparr = np.frombuffer(contents, np.uint8)
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
     return img
 
+@app.get("/")
+def root():
+    return {
+        "message": "YOLOv8 Service is Running!",
+        "docs": "/docs",
+        "monitoring": "/metrics",
+        "endpoints": {
+            "/detect_image": "Returns image with bounding boxes",
+            "/detect_json": "Returns JSON with object counts"
+        }
+    }
+
 @app.post("/detect_image")
 async def get_image_with_boxes(
     file: UploadFile = File(...),
-    conf: float = Query(0.25, ge=0.0, le=1.0, description="Minimum confidence threshold (0.0 - 1.0)")
+    conf: float = Query(0.25, ge=0.0, le=1.0, description="Confidence threshold (0.0 - 1.0)")
 ):
-    """
-    conf standart = 0.25
-    """
     contents = await file.read()
     img = process_image(contents)
 
@@ -50,9 +51,6 @@ async def get_object_counts(
     file: UploadFile = File(...),
     conf: float = Query(0.25, ge=0.0, le=1.0)
 ):
-    """
-    Return json file with stats of detected persons or objects
-    """
     contents = await file.read()
     img = process_image(contents)
 
