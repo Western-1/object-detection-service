@@ -4,6 +4,9 @@
 
 A production-ready Computer Vision service designed for real-time object detection. It features a scalable FastAPI backend, Dockerized deployment, CPU optimization algorithms, and a full observability stack (Prometheus & SQLite logs).
 
+![Git_Video gif_15s](https://github.com/user-attachments/assets/4d360242-44a3-4956-aea8-9c526f896663)
+
+
 > _Note: This dashboard demonstrates real-time inference capabilities with minimal latency._
 
 
